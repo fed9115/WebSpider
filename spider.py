@@ -4,34 +4,20 @@ from urllib.parse import quote
 import time
 import sys
 import os.path
+import requests
 
 '''
-    This Python script is designed as a web spider to get search results from baidu.com, which is the biggest search 
-engine in China.
-    By using this program, user can get the results (at most 30) of the keyword in first 3 pages. The program can 
-generate a txt file which contains at most 60 lines. For each searching result, first line is the title of it, and the 
-second line is the link. 
-    This Program only supports Python with version over 3, so it does not support Python 2. Before using it, user must 
-make sure s/he has the driver of the browser in the computer to run the web spider. (Actually the spider is an 
-artificial visit and it can avoid the anti-spider mechanism of the search engine by opening a new page in the specified 
-browser). The developers provide web drivers of Chrome 74 on Linux, MacOS, and Windows under the folder venv. 
-    This program can be run in cmd (a.k.a. terminal on Linux and Mac). When executing it, user must pass at least 3 
-parameters, the first one is the path of the save txt file, the second one is the path of the web driver, the following
-ones are the keywords the user would like to search. The user can designate a specific website, if do so, the searching 
-results will only be consist of the web pages under the site. For example, if you would like to search documents under 
-百度文库(Baidu Wenku), you may append a token after your keyword like "site:wenku.baidu.com." Remember to add the 
-required identifier "site:". In a nutshell, for example, you want to search a product called iPhone of the company 
-called Apple under Baidu Wenku by using Chrome 74 on Mac, and you want to generate the resulting file on Desktop,
-you may type /Users/**userName**/Desktop/ chromedriver-Mac iPhone Apple site:wenku.baidu.com
-
 @author Max Chen, Erdi Fan
 
-@version 19.6.4
+@version 19.6.10
 '''
 
 
 def main(argv):
-    browser = webdriver.Chrome(argv[2])
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless")
+
+    browser = webdriver.Chrome(options=chrome_options, executable_path=argv[2])
 
     keyword = ''
     filename = ''
@@ -67,11 +53,17 @@ def main(argv):
 
         for h3 in res_web:
             a = h3.find('a', href=True)
-            print(h3.get_text().replace(',', ' ').replace('\n', '') + ',' + a['href'], file=f)
-
+            fakeUrl = a['href']
+            try:
+                actualUrl = requests.get(fakeUrl, allow_redirects=False).headers['Location']
+                if actualUrl.startswith('http'):
+                    print(h3.get_text().replace(',', ' ').replace('\n', '') + ',' + actualUrl, file=f)
+            except:
+                pass
         time.sleep(1)
 
     print("MOBILE RESULTS", file=f)
+
 
     for i in range(0, int(argv[3]) * 10, 10):
 
@@ -88,9 +80,18 @@ def main(argv):
         for header in res_mobile:
             a = header.find('a', href=True)
             if a is not None:
-                print(a.get_text().replace(',', ' ').replace('\n', '') + ',' + a['href'], file=f)
+                fakeUrl = requests.get(a['href']).url
 
-        time.sleep(1)
+                try:
+                    actual = requests.get(fakeUrl, allow_redirects=False)
+                    soup_link = BeautifulSoup(actual.content, 'lxml')
+                    link = object.__str__(soup_link.find('noscript').find())
+                    link = link[22:len(link) - 24]
+                    if link.endswith('\''):
+                        link = link[0:len(link)-1]
+                    print(a.get_text().replace(',', ' ').replace('\n', '') + ',' + link, file=f)
+                except:
+                    pass
 
     browser.quit()
     f.close()
