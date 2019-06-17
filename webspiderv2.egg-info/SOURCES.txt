@@ -1,0 +1,9 @@
+setup.py
+src/__init__.py
+src/webspider.py
+webspiderv2.egg-info/PKG-INFO
+webspiderv2.egg-info/SOURCES.txt
+webspiderv2.egg-info/dependency_links.txt
+webspiderv2.egg-info/entry_points.txt
+webspiderv2.egg-info/requires.txt
+webspiderv2.egg-info/top_level.txt

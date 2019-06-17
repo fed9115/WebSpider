@@ -1,0 +1,3 @@
+[console_scripts]
+go = src.webspider:main
+
