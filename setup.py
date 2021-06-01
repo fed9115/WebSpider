@@ -20,7 +20,7 @@ setup(
         'requests==2.22.0',
         'selenium==3.141.0',
         'soupsieve==1.9.1',
-        'urllib3==1.25.3',
+        'urllib3==1.26.5',
         'setuptools==40.8.0',
     ],
     entry_points = {
