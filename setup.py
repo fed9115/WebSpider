@@ -16,7 +16,7 @@ setup(
         'certifi==2019.3.9',
         'chardet==3.0.4',
         'idna==2.8',
-        'lxml==4.3.4',
+        'lxml==4.9.1',
         'requests==2.22.0',
         'selenium==3.141.0',
         'soupsieve==1.9.1',
