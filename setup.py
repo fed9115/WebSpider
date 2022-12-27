@@ -21,7 +21,7 @@ setup(
         'selenium==3.141.0',
         'soupsieve==1.9.1',
         'urllib3==1.25.3',
-        'setuptools==40.8.0',
+        'setuptools==65.5.1',
     ],
     entry_points = {
         'console_scripts':[
